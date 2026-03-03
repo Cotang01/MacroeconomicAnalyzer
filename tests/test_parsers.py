@@ -1,9 +1,7 @@
-import os.path
-
 import pytest
-import csv
-import sys
 
+import os.path
+import sys
 from typing import List
 
 from parsers import ClaParser, CfgIniParser
