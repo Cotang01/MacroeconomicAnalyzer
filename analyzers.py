@@ -42,7 +42,6 @@ class CsvAnalyzer:
         self.aggregate_func = aggregate_func
         self.report_field = report_field
         self.data: Dict[str, List[float]] = {}
-        self.columns_num = len(self.csv_headers) - 1  # to skip last col
         self.year_col_pos = 1
 
         # 0 for countries, -1 for continents
