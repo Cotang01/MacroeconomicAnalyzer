@@ -1,6 +1,9 @@
 ### Test task for StaffIT
 
-#### Packet manager used: uv
+### Prerequisites:
+
+- Python 3.12
+- uv package manager
 
 #### Script usage example:
 
