@@ -41,7 +41,7 @@ class CsvAnalyzer:
         self.report_group_by = report_group_by
         self.aggregate_func = aggregate_func
         self.report_field = report_field
-        self.data: Dict[str, List[tuple[str, float]]]= {}
+        self.data: Dict[str, List[float]] = {}
         self.columns_num = len(self.csv_headers) - 1  # to skip last col
         self.year_col_pos = 1
 
@@ -50,6 +50,9 @@ class CsvAnalyzer:
 
         # 0 for "asc", 1 for "desc"
         self.sort_order = 0 + (sort_order == "desc")
+
+        # index of the needed field to analyze
+        self.report_field_pos = self.csv_headers.index(self.report_field)
 
     def _init_headers(self) -> None:
         """
@@ -85,10 +88,9 @@ class CsvAnalyzer:
         """
         res = []
         aggr_func = self.aggregate_func
-        field = self.report_field
         for group_by_field, stats in self.data.items():
             res.append(
-                (group_by_field, (operations[aggr_func](stats[field])))
+                (group_by_field, (operations[aggr_func](stats)))
             )
         return res
 
@@ -97,34 +99,31 @@ class CsvAnalyzer:
         Reads csv file using path and initiates data collection using chosen
         field as a grouping key.
         Example:
-            If grouping data by countries
+            If grouping data by countries and calculating gdp field
             [
                 ["country", "gdp", ...],
                 ["United States", "25462", ...],
                 ...
-            ] -> {"United States": {"gdp": [25462, ...]}, ...}
+            ] -> {"United States": [25462, ...], ...}
         """
         year_ranges: range = self.report_year_range
         idx = self.group_by_idx
         data = self.data
         headers = self.csv_headers
+        report_field_pos = self.report_field_pos
         with open(file=path, mode="r", encoding="UTF-8") as f:
             reader = csv.reader(f)
             cur_headers = next(reader)
             if cur_headers != self.csv_headers:
                 raise ValueError(
                     f"Headers in {path} doesn't match the initial ones; "
-                    f"Initial headers are {self.csv_headers}, "
+                    f"Initial headers are {headers}, "
                     f"got {cur_headers}"
                 )
             for row in reader:
                 if int(row[self.year_col_pos]) in year_ranges:
-                    for i in range(1, self.columns_num):
-                        # row[idx] picks either only countries' names
-                        # or only continents' names
-                        data.setdefault(row[idx], {})
-                        data[row[idx]].setdefault(headers[i], [])
-                        data[row[idx]][headers[i]].append(float(row[i]))
+                    data.setdefault(row[idx], [])
+                    data[row[idx]].append(float(row[report_field_pos]))
 
     def convert_into_table(self, report: List[tuple[str, float]]) -> str:
         """ Returns tabulated report if it has data, "[]" otherwise. """
