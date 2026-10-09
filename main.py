@@ -20,6 +20,6 @@ def main():
                                   group_by="country", 
                                   report_field=cli_args.report_field)
     
-
+    
 if __name__ == "__main__":
     main()

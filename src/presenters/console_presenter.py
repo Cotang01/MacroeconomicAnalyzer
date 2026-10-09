@@ -4,10 +4,10 @@ class ConsolePresenter:
     @staticmethod
     def print_report(report: list[tuple[str, float]],
                      group_by: str ="country", 
-                     report_field: str ="gdp") -> str:
+                     report_field: str ="gdp") -> None:
         """ Returns tabulated report if it has data, "[]" otherwise. """
         if not report:
-            return "[]"
+            print("NO")
         print(tabulate(
             report,
             headers=["", group_by, report_field],

@@ -42,9 +42,3 @@ class CsvRepository(BaseRepository):
                             idx = fields_idx[csv_header_name]
                             kwargs_[field] = cast_func(row[idx].strip())
                         yield CountryData(**kwargs_)
-
-# if __name__ == "__main__":
-#     from schemas import CountryDataSchema
-#     logging.basicConfig(level=logging.INFO)
-#     for data in CsvRepository(file_paths=["economic1.csv"], schema=CountryDataSchema).stream_data():
-#         print(data)
