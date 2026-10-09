@@ -1,31 +1,25 @@
-from parsers import ClaParser, CfgIniParser
-from analyzers import CsvAnalyzer
-
 import os
 from pathlib import Path
 
+from src.app.cli.parser import CliParser
+from src.presenters.console_presenter import ConsolePresenter
+from src.infrastructure.repositories import CsvRepository
+from src.infrastructure.schemas import CountryDataSchema
+from src.services.analyzers import MacroeconomicAnalyzer
+from src.domain.calculators import operations
 
 def main():
-    cla_args = ClaParser()
-    config = CfgIniParser(
-        ini_file_path=os.path.join(Path(__file__).parent, "config.ini")
-    )
-
-    config.validate_report_args(
-        aggreg_func=cla_args.aggregate_func,
-        report_field=cla_args.report_field
-    )
-    analyzer = CsvAnalyzer(
-        csv_files_paths=cla_args.csv_files,
-        report_year_range=config.report_year_range,
-        report_field=cla_args.report_field,
-        report_group_by=config.report_group_by,
-        aggregate_func=cla_args.aggregate_func,
-        sort_order=config.report_sort_order
-    )
-    report = analyzer.get_report()
-    print(analyzer.convert_into_table(report))
-
+    cli_args = CliParser()
+    
+    repo = CsvRepository(file_paths=cli_args.csv_file_paths, 
+                         schema=CountryDataSchema)
+    analyzer = MacroeconomicAnalyzer(repository=repo, 
+                                     aggregation_operations=operations)
+    report = analyzer.form_data(report_type=cli_args.aggregate_func, report_field=cli_args.report_field)
+    ConsolePresenter.print_report(report=report,
+                                  group_by="country", 
+                                  report_field=cli_args.report_field)
+    
 
 if __name__ == "__main__":
     main()
