@@ -9,14 +9,14 @@ from src.infrastructure.schemas import CountryDataSchema
 
 logger = logging.getLogger(__name__)
     
-class CsvRepository(BaseRepository):
+class CsvRepository(BaseRepository[CountryData]):
     
     def __init__(self, file_paths: list[str], schema: CountryDataSchema) -> None:
         self.file_paths = file_paths
         self.schema = schema
         self.valid_headers = [getattr(schema, field.name) for field in fields(schema)]
     
-    def stream_data(self, year_range: range = range(1970, 2030)) -> Iterator[CountryData]:
+    def stream_data(self, year_range: range) -> Iterator[CountryData]:
         schema = self.schema
         valid_headers = self.valid_headers
         for path in self.file_paths:

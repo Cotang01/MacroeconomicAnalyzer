@@ -1,13 +1,16 @@
-from typing import Callable
+from typing import Callable, TypeVar
 from collections import defaultdict
 
 from src.domain.interfaces import BaseRepository
 from src.domain.models import ReportData
 
 
+T = TypeVar("T")
+
+
 class MacroeconomicAnalyzer:
     def __init__(self, 
-                 repository: BaseRepository, 
+                 repository: BaseRepository[T], 
                  aggregation_operations: dict[str, Callable]) -> None:
         self._repository = repository
         self._aggregation_operations = aggregation_operations

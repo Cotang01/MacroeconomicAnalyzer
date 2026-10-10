@@ -9,7 +9,6 @@ class BaseRepository(ABC, Generic[T]):
         super().__init__()
     
     @abstractmethod
-    def stream_data(self, 
-                    year_range: range = range(1970, 2030)) -> Iterator[T]:
+    def stream_data(self, year_range: range) -> Iterator[T]:
         pass
     
