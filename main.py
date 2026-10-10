@@ -12,13 +12,15 @@ def main():
     cli_args = CliParser()
     
     repo = CsvRepository(file_paths=cli_args.csv_file_paths, 
-                         schema=CountryDataSchema)
+                         schema=CountryDataSchema())
     analyzer = MacroeconomicAnalyzer(repository=repo, 
                                      aggregation_operations=operations)
-    report = analyzer.form_data(report_type=cli_args.aggregate_func, report_field=cli_args.report_field)
-    ConsolePresenter.print_report(report=report,
-                                  group_by="country", 
-                                  report_field=cli_args.report_field)
+    report = analyzer.form_data(report_type=cli_args.aggregate_func, 
+                                report_field=cli_args.report_field,
+                                group_by_field="country",
+                                year_range=range(1970, 2030),
+                                is_descending_ordering=False)
+    ConsolePresenter.print_report(report=report)
     
     
 if __name__ == "__main__":

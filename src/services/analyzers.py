@@ -2,6 +2,8 @@ from typing import Callable
 from collections import defaultdict
 
 from src.domain.interfaces import BaseRepository
+from src.domain.models import ReportData
+
 
 class MacroeconomicAnalyzer:
     def __init__(self, 
@@ -12,14 +14,21 @@ class MacroeconomicAnalyzer:
         
     def form_data(self,
                   report_type: str,
-                  report_field: str, 
-                  year_range: range = range(1970, 2030)) -> list[tuple[str, float]]:
+                  report_field: str,
+                  group_by_field: str,
+                  year_range: range,
+                  is_descending_ordering: bool) -> ReportData:
         data = defaultdict(list)
         aggr_oper = self._aggregation_operations
         for d in self._repository.stream_data(year_range=year_range):
-            data[getattr(d, "country")].append(getattr(d, report_field))
+            data[getattr(d, group_by_field)].append(getattr(d, report_field))
         result = []
         for k, v in data.items():
             result.append((k, aggr_oper[report_type](v)))
-        return result
+        result.sort(key=lambda x: x[1], reverse=is_descending_ordering)
+        return ReportData(
+            group_by_field=group_by_field, 
+            report_field=report_field, 
+            data=result
+            )
     

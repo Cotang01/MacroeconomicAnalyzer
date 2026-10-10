@@ -1,14 +1,8 @@
 from dataclasses import dataclass
-from abc import ABC
 
 
 @dataclass(frozen=True)
-class Data(ABC):
-    pass
-
-
-@dataclass(frozen=True)
-class CountryData(Data):
+class CountryData:
     country: str
     year: int
     gdp: int
@@ -17,3 +11,11 @@ class CountryData(Data):
     unemployment: float
     population: int
     continent: str
+
+
+@dataclass(frozen=True)
+class ReportData:
+    group_by_field: str
+    report_field: str
+    data: list[tuple[str, float]]
+    

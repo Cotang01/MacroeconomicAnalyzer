@@ -3,7 +3,7 @@ from csv import reader as CsvReader
 from dataclasses import fields
 import logging
 
-from src.domain.models import Data, CountryData
+from src.domain.models import CountryData
 from src.domain.interfaces import BaseRepository
 from src.infrastructure.schemas import CountryDataSchema
 
@@ -11,12 +11,12 @@ logger = logging.getLogger(__name__)
     
 class CsvRepository(BaseRepository):
     
-    def __init__(self, file_paths: list[str], schema: type[CountryDataSchema]) -> None:
+    def __init__(self, file_paths: list[str], schema: CountryDataSchema) -> None:
         self.file_paths = file_paths
         self.schema = schema
         self.valid_headers = [getattr(schema, field.name) for field in fields(schema)]
     
-    def stream_data(self, year_range: range = range(1970, 2030)) -> Iterator[Data]:
+    def stream_data(self, year_range: range = range(1970, 2030)) -> Iterator[CountryData]:
         schema = self.schema
         valid_headers = self.valid_headers
         for path in self.file_paths:

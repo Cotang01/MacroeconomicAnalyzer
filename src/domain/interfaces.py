@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import Iterator
+from typing import Iterator, TypeVar, Generic
 
-from src.domain.models import Data
+T = TypeVar("T")
 
-class BaseRepository(ABC):
+class BaseRepository(ABC, Generic[T]):
     
     def __init__(self) -> None:
         super().__init__()
     
     @abstractmethod
     def stream_data(self, 
-                    year_range: range = range(1970, 2030)) -> Iterator[Data]:
+                    year_range: range = range(1970, 2030)) -> Iterator[T]:
         pass
     
