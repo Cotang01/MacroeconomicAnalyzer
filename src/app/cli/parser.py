@@ -49,10 +49,10 @@ class CliParser:
         Function that validates file paths: extension is .csv , path exists,
         is file; and then replaces paths with respective absolute versions.
         """
-        for i in range(len(paths)):
-            cur_path = paths[i]
-            abs_path = os.path.abspath(cur_path)
-            cur_ext = os.path.basename(cur_path).split(".")[-1]
+        abs_paths = []
+        for p in paths:
+            abs_path = os.path.abspath(p)
+            cur_ext = os.path.basename(p).split(".")[-1]
             # logic to skip invalid paths can be added
             if cur_ext != "csv":
                 raise BadArgumentError(
@@ -66,5 +66,5 @@ class CliParser:
                 raise BadArgumentError(
                     message=f"Not a file: {abs_path}"
                 )
-            paths[i] = abs_path
+            abs_paths.append(p)
         self.csv_file_paths = paths
