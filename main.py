@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 from src.app.cli.parser import CliParser
 from src.presenters.console_presenter import ConsolePresenter
 from src.infrastructure.repositories import CsvRepository
@@ -19,7 +16,7 @@ def main():
                                 report_field=cli_args.report_field,
                                 group_by_field="country",
                                 year_range=range(1970, 2030),
-                                is_descending_ordering=False)
+                                is_descending_ordering=True)
     ConsolePresenter.print_report(report=report)
     
     
