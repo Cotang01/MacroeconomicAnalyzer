@@ -52,9 +52,9 @@ class CliParser:
         abs_paths = []
         for p in paths:
             abs_path = os.path.abspath(p)
-            cur_ext = os.path.basename(p).split(".")[-1]
+            _, cur_ext = os.path.splitext(abs_path)
             # logic to skip invalid paths can be added
-            if cur_ext != "csv":
+            if cur_ext.lower() != ".csv":
                 raise BadArgumentError(
                     message=f"Unsupported file extension: {cur_ext}"
                 )
