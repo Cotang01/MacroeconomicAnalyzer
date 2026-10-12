@@ -67,4 +67,4 @@ class CliParser:
                     message=f"Not a file: {abs_path}"
                 )
             abs_paths.append(p)
-        self.csv_file_paths = paths
+        self.csv_file_paths = abs_paths
