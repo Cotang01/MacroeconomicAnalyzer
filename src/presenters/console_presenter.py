@@ -7,7 +7,8 @@ from src.domain.models import ReportData
 class ConsolePresenter:
     @staticmethod
     def print_report(report: ReportData) -> None:
-        """ Returns tabulated report if it has data, "[]" otherwise. """
+        """ Prints tabulated report in the console 
+        if the report.data is not empty, emptry string otherwise. """
         if not report.data:
             print("NO")
             return
