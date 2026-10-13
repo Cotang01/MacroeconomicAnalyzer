@@ -3,8 +3,7 @@ import os
 
 
 class BadArgumentError(Exception):
-    def __init__(self, message: str) -> None:
-        self.message = message
+    pass
 
 class CliParser:
 
@@ -33,13 +32,13 @@ class CliParser:
         for arg, value in args.__dict__.items():
             if value is None:
                 raise BadArgumentError(
-                    message=f"{arg} was not provided.",
+                    f"{arg} was not provided.",
                 )
         self._resolve_files(args.files)
         report_args: list[str] = args.report.split('-')
         if len(report_args) != 2:
             raise BadArgumentError(
-                message=f"Unsupported report args {report_args}",
+                f"Unsupported report args {report_args}",
             )
         self.aggregate_func = report_args[0]
         self.report_field = report_args[-1]
@@ -56,15 +55,15 @@ class CliParser:
             # logic to skip invalid paths can be added
             if cur_ext.lower() != ".csv":
                 raise BadArgumentError(
-                    message=f"Unsupported file extension: {cur_ext}"
+                    f"Unsupported file extension: {cur_ext}"
                 )
             elif not os.path.exists(abs_path):
                 raise BadArgumentError(
-                    message=f"Path doesn't exist: {abs_path}"
+                    f"Path doesn't exist: {abs_path}"
                 )
             elif not os.path.isfile(abs_path):
                 raise BadArgumentError(
-                    message=f"Not a file: {abs_path}"
+                    f"Not a file: {abs_path}"
                 )
             abs_paths.append(p)
         self.csv_file_paths = abs_paths
