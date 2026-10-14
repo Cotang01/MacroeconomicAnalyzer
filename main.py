@@ -17,13 +17,13 @@ def main():
     
     repo = CsvRepository(file_paths=cli_args.csv_file_paths, 
                          schema=CsvCountryDataSchema())
-    analyzer = MacroeconomicAnalyzer(repository=repo, 
-                                     aggregation_operations=operations)
+    analyzer = MacroeconomicAnalyzer(repository=repo)
     report = analyzer.form_data(report_type=cli_args.aggregate_func, 
                                 report_field=cli_args.report_field,
                                 group_by_field="country",
                                 year_range=range(1970, 2030),
-                                is_descending_ordering=True)
+                                is_descending_ordering=True,
+                                aggregation_funcs=operations)
     table = ConsolePresenter.convert_into_table(report=report)
     print(table)
     
