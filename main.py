@@ -1,10 +1,9 @@
 import logging
-import sys
 
 from src.app.cli.parser import CliParser
 from src.presenters.console_presenter import ConsolePresenter
 from src.infrastructure.repositories import CsvRepository
-from src.infrastructure.schemas import CountryDataSchema
+from src.infrastructure.schemas import CsvCountryDataSchema
 from src.services.analyzers import MacroeconomicAnalyzer
 from src.domain.calculators import operations
 
@@ -17,7 +16,7 @@ def main():
     cli_args = CliParser()
     
     repo = CsvRepository(file_paths=cli_args.csv_file_paths, 
-                         schema=CountryDataSchema())
+                         schema=CsvCountryDataSchema())
     analyzer = MacroeconomicAnalyzer(repository=repo, 
                                      aggregation_operations=operations)
     report = analyzer.form_data(report_type=cli_args.aggregate_func, 
