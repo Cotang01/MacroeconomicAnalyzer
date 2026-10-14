@@ -10,7 +10,7 @@ T = TypeVar("T")
 
 class MacroeconomicAnalyzer:
     def __init__(self, 
-                 repository: BaseRepository[T], ) -> None:
+                 repository: BaseRepository[T]) -> None:
         self._repository = repository
         
     def form_data(self,
