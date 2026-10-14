@@ -65,5 +65,6 @@ class CliParser:
                 raise BadArgumentError(
                     f"Not a file: {abs_path}"
                 )
-            abs_paths.append(p)
+            abs_paths.append(abs_path)
         self.csv_file_paths = abs_paths
+        
