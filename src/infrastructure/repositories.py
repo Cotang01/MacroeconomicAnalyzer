@@ -1,13 +1,9 @@
 from typing import Iterator, Sequence
 import csv
-import logging
 
 from src.domain.models import CountryData
 from src.domain.interfaces import BaseRepository
 from src.infrastructure.schemas import CsvCountryDataSchema
-
-
-logger = logging.getLogger(__name__)
 
 
 class CsvSourceError(Exception):
