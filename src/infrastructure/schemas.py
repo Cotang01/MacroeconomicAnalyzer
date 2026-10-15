@@ -10,7 +10,7 @@ class CountryDataField(StrEnum):
     GDP = "gdp"
     GDP_GROWTH = "gdp_growth"
     INFLATION = "inflation"
-    UNEPLOYMENT = "unemployment"
+    UNEMPLOYMENT = "unemployment"
     POPULATION = "population"
     CONTINENT = "continent"
 
@@ -23,7 +23,7 @@ class CsvCountryDataSchema:
         CountryDataField.GDP: "gdp",
         CountryDataField.GDP_GROWTH: "gdp_growth",
         CountryDataField.INFLATION: "inflation",
-        CountryDataField.UNEPLOYMENT: "unemployment",
+        CountryDataField.UNEMPLOYMENT: "unemployment",
         CountryDataField.POPULATION: "population",
         CountryDataField.CONTINENT: "continent"
     }
