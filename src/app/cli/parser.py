@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 from dataclasses import dataclass
 
-from src.domain.calculators import OPERATIONS, AGGREGATABLE_FIELDS
+from src.domain.analysis_rules import OPERATIONS, AGGREGATABLE_FIELDS
 
 
 VALID_OPERATIONS = {*OPERATIONS.keys()}

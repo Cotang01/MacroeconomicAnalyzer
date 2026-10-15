@@ -6,7 +6,7 @@ from src.presenters.console_presenter import ConsolePresenter
 from src.infrastructure.repositories import CsvRepository, CsvSourceError
 from src.infrastructure.schemas import CsvCountryDataSchema
 from src.services.analyzers import MacroeconomicAnalyzer
-from src.domain.calculators import OPERATIONS
+from src.domain.analysis_rules import OPERATIONS
 
 
 logging.basicConfig()
