@@ -1,70 +1,100 @@
 from argparse import ArgumentParser
-import os
+from pathlib import Path
+from dataclasses import dataclass
+
+from src.domain.calculators import OPERATIONS, AGGREGATABLE_FIELDS
+
+
+VALID_OPERATIONS = {*OPERATIONS.keys()}
+VALID_FILE_EXTENSIONS = {".csv"}
 
 
 class BadArgumentError(Exception):
     pass
+
+
+class BadFileExtensionError(BadArgumentError):
+    pass
+
+
+class BadFilePathError(BadArgumentError):
+    pass
+
+
+class BadAggregationFuncError(BadArgumentError):
+    pass
+
+
+class BadReportFieldError(BadArgumentError):
+    pass
+
+
+@dataclass(frozen=True)
+class CliArgs:
+    file_paths: list[Path]
+    aggregate_operation: str
+    report_field: str
+
 
 class CliParser:
 
     def __init__(self):
         """
         Used for parsing command line arguments.
-            --files - list of .csv files to read.
-            --report - report's name.
+            --files - sequence of .csv files to read delimited by space.
+            --report - report's parameters (f"{type}-{field}").
         """
         self._parser = ArgumentParser(
             prog="MacroeconomicAnalyzer",
             description="Script to analyze datasets of "
                         "countries' various statistics."
         )
-        
-        self._setup_arguments()
-        
-    
-    def _setup_arguments(self) -> None:
         self._parser.add_argument("-f", "--files", nargs="+",
                                              help=".csv files to analyze.")
         self._parser.add_argument("-r", "--report",
-                                               help="Report's name.")
+                                               help="Report's params.")
+    
+    def parse_args(self, argv: list[str] | None = None) -> CliArgs:
+        args = self._parser.parse_args(argv)
+        if not args.files:
+            raise BadArgumentError("--files is required")
+        if not args.report:
+            raise BadArgumentError("--report is required")
+        paths = self._resolve_files(args.files)
+        if not paths:
+            raise BadFilePathError(f"Provided file paths are invalid: {paths}")
+        aggreg_func, report_field = self._parse_report(args.report)
+        return CliArgs(
+            file_paths=paths,
+            aggregate_operation=aggreg_func,
+            report_field=report_field
+        )
         
-        args = self._parser.parse_args()
-        for arg, value in args.__dict__.items():
-            if value is None:
-                raise BadArgumentError(
-                    f"{arg} was not provided.",
-                )
-        self._resolve_files(args.files)
-        report_args: list[str] = args.report.split('-')
-        if len(report_args) != 2:
-            raise BadArgumentError(
-                f"Unsupported report args {report_args}",
-            )
-        self.aggregate_func = report_args[0]
-        self.report_field = report_args[-1]
 
-    def _resolve_files(self, paths: list[str]) -> None:
+    def _resolve_files(self, paths: list[str]) -> list[Path]:
         """
-        Function that validates file paths: extension is .csv , path exists,
-        is file; and then replaces paths with respective absolute versions.
+        Function that validates file paths and returns absolute paths.
         """
         abs_paths = []
         for p in paths:
-            abs_path = os.path.abspath(p)
-            _, cur_ext = os.path.splitext(abs_path)
-            # logic to skip invalid paths can be added
-            if cur_ext.lower() != ".csv":
-                raise BadArgumentError(
-                    f"Unsupported file extension: {cur_ext}"
-                )
-            elif not os.path.exists(abs_path):
-                raise BadArgumentError(
-                    f"Path doesn't exist: {abs_path}"
-                )
-            elif not os.path.isfile(abs_path):
-                raise BadArgumentError(
-                    f"Not a file: {abs_path}"
-                )
+            abs_path = Path(p).absolute()
+            if not abs_path.is_file():
+                raise BadFilePathError(f"{p} is not a file")
+            if abs_path.suffix.lower() not in VALID_FILE_EXTENSIONS:
+                raise BadFileExtensionError(f"{p} has unsupported extension")
             abs_paths.append(abs_path)
-        self.csv_file_paths = abs_paths
+        return abs_paths
         
+    def _parse_report(self, report: str) -> tuple[str, str]:
+        report_args = report.split("-")
+        if len(report_args) != 2:
+            raise BadArgumentError(f"{report} is not supported.")
+        aggr, field = report_args
+        if aggr not in VALID_OPERATIONS:
+            raise BadAggregationFuncError(f"{aggr} operation is not supported")
+        if field not in AGGREGATABLE_FIELDS:
+            raise BadReportFieldError(
+                f"You can not form a report based on {field}"
+                )
+        return aggr, field
+    

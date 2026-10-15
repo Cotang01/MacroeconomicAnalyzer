@@ -5,25 +5,26 @@ from src.presenters.console_presenter import ConsolePresenter
 from src.infrastructure.repositories import CsvRepository
 from src.infrastructure.schemas import CsvCountryDataSchema
 from src.services.analyzers import MacroeconomicAnalyzer
-from src.domain.calculators import operations
+from src.domain.calculators import OPERATIONS
 
 
 logger = logging.basicConfig()
 
 
-def main():
+def main(argv: list[str] | None = None):
     
-    cli_args = CliParser()
+    parser = CliParser()
+    args = parser.parse_args(argv)
     
-    repo = CsvRepository(file_paths=cli_args.csv_file_paths, 
+    repo = CsvRepository(file_paths=args.file_paths, 
                          schema=CsvCountryDataSchema())
     analyzer = MacroeconomicAnalyzer(repository=repo)
-    report = analyzer.form_data(report_type=cli_args.aggregate_func, 
-                                report_field=cli_args.report_field,
+    report = analyzer.form_data(report_type=args.aggregate_operation, 
+                                report_field=args.report_field,
                                 group_by_field="country",
                                 year_range=range(1970, 2030),
                                 is_descending_ordering=True,
-                                aggregation_funcs=operations)
+                                aggregation_funcs=OPERATIONS)
     table = ConsolePresenter.convert_into_table(report=report)
     print(table)
     

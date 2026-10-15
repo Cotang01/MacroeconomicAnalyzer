@@ -1,5 +1,6 @@
 from typing import Iterator, Sequence
 import csv
+from pathlib import Path
 
 from src.domain.models import CountryData
 from src.domain.interfaces import BaseRepository
@@ -20,8 +21,8 @@ class MissingFieldsException(CsvSourceError):
 
 class CsvRepository(BaseRepository[CountryData]):
     
-    def __init__(self, 
-                 file_paths: list[str], 
+    def __init__(self,
+                 file_paths: list[Path], 
                  schema: CsvCountryDataSchema) -> None:
         self.file_paths = file_paths
         self.schema = schema
@@ -49,7 +50,7 @@ class CsvRepository(BaseRepository[CountryData]):
     
     def _validate_headers(self, 
                           cur_headers: Sequence[str] | None, 
-                          path: str) -> None:
+                          path: Path) -> None:
         # current file headers validation with schema
         missing_fields = []
         if cur_headers is None:
