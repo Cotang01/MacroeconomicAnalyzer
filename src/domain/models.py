@@ -13,9 +13,7 @@ class CountryData:
     continent: str
     
     def __post_init__(self):
-        if self.year <= 0:
-            raise ValueError(f"Year can't be a negative number: {self.year}")
-        elif self.gdp < 0:
+        if self.gdp < 0:
             raise ValueError(f"GDP can't be a negative number: {self.gdp}")
         elif self.population < 0:
             raise ValueError(
