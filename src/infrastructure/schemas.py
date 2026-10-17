@@ -61,7 +61,7 @@ class CsvCountryDataSchema:
         return cls._convert_to(cast_func, field.value, raw_value)
         
     @staticmethod
-    def _convert_to(cast_func: Callable[[str], T] , col: str, value: str | None) -> T:
+    def _convert_to(cast_func: Callable[[str], T], col: str, value: str | None) -> T:
         if value is None:
             raise InvalidDataError("Got bad value", col, value)
         try:
