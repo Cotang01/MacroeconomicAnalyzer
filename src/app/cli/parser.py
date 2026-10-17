@@ -61,8 +61,6 @@ class CliParser:
         if not args.report:
             raise BadArgumentError("--report is required")
         paths = self._resolve_files(args.files)
-        if not paths:
-            raise BadFilePathError(f"Provided file paths are invalid: {paths}")
         aggreg_func, report_field = self._parse_report(args.report)
         return CliArgs(
             file_paths=paths,
