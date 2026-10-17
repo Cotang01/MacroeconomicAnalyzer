@@ -63,9 +63,11 @@ class CsvCountryDataSchema:
     @staticmethod
     def _convert_to(cast_func: Callable[[str], T] , col: str, value: str | None) -> T:
         if value is None:
-            raise InvalidDataError("Got None value", col, value)
+            raise InvalidDataError("Got bad value", col, value)
         try:
             return cast_func(value.strip())
         except ValueError as e:
-            raise InvalidDataError("Could not convert into int", col, value) from e
+            raise InvalidDataError(
+                f"Could not convert into {cast_func}", col, value
+                ) from e
     
