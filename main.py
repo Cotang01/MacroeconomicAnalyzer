@@ -18,7 +18,7 @@ def main(argv: list[str] | None = None):
         args = CliParser().parse_args(argv)
         
         repo = CsvRepository(file_paths=args.file_paths, 
-                            schema=CsvCountryDataSchema())
+                            schema=CsvCountryDataSchema)
         analyzer = MacroeconomicAnalyzer(repository=repo)
         # group_by_field and year_range can be moved to src/app/cli/parser.py
         report = analyzer.form_data(report_type=args.aggregate_operation, 

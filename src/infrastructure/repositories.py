@@ -4,7 +4,7 @@ from pathlib import Path
 
 from src.domain.models import CountryData
 from src.domain.interfaces import BaseRepository
-from src.infrastructure.schemas import CsvCountryDataSchema
+from src.infrastructure.schemas import CsvCountryDataSchema, InvalidDataError
 
 
 class CsvSourceError(Exception):
@@ -23,7 +23,7 @@ class CsvRepository(BaseRepository[CountryData]):
     
     def __init__(self,
                  file_paths: list[Path], 
-                 schema: CsvCountryDataSchema) -> None:
+                 schema: type[CsvCountryDataSchema]) -> None:
         self.file_paths = file_paths
         self.schema = schema
         self.valid_headers = schema.columns.values()
@@ -34,16 +34,16 @@ class CsvRepository(BaseRepository[CountryData]):
             try:
                 with open(file=path, mode="r", 
                           encoding="UTF-8", newline="") as f:
-                    reader = csv.DictReader(f, restval=None)
+                    reader = csv.DictReader(f, restval="")
                     self._validate_headers(reader.fieldnames, path)
                     for i, row in enumerate(reader, start=2):
                         try:
                             country_data: CountryData = schema.to_domain(row)
                             if country_data.year in year_range:
                                 yield country_data
-                        except (ValueError, TypeError) as e:
+                        except InvalidDataError as e:
                             raise CsvSourceError(
-                                f"{path}, invalid data in row {i}"
+                                f"{path}, invalid data in row {i}: {e}"
                                 ) from e
             except UnicodeDecodeError as e:
                 raise CsvSourceError(f"{e}. Could not decode {path}") from e
