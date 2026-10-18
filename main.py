@@ -2,6 +2,7 @@ import logging
 import sys
 
 from src.app.cli.parser import CliParser, BadArgumentError
+from src.app.report_settings import GROUP_BY_FIELD, YEAR_RANGE
 from src.presenters.console_presenter import ConsolePresenter
 from src.infrastructure.repositories import CsvRepository, CsvSourceError
 from src.infrastructure.schemas import CsvCountryDataSchema
@@ -23,8 +24,8 @@ def main(argv: list[str] | None = None):
         # group_by_field and year_range can be moved to src/app/cli/parser.py
         report = analyzer.form_data(report_type=args.aggregate_operation, 
                                     report_field=args.report_field,
-                                    group_by_field="country",
-                                    year_range=range(1970, 2030),
+                                    group_by_field=GROUP_BY_FIELD,
+                                    year_range=YEAR_RANGE,
                                     is_descending_ordering=True,
                                     aggregation_funcs=OPERATIONS)
         ConsolePresenter().print_report(report=report)
