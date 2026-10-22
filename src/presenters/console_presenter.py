@@ -5,7 +5,7 @@ from src.domain.models import ReportData
 
 
 class ConsolePresenter:
-
+    """Presenter class for reports' formatting"""
     def __init__(self, stream=sys.stdout) -> None:
         self.stream = stream
     
