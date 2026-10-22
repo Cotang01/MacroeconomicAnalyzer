@@ -10,8 +10,8 @@ class ConsolePresenter:
         self.stream = stream
     
     def print_report(self, report: ReportData) -> None:
-        """ Converts report into str table if the report.data is not empty, 
-        returns empty string otherwise. """
+        """ Converts report into tabulate table if the report.data is not 
+        empty and prints it using self.stream"""
         if not report.data:
             print("NO", file=self.stream)
             return
