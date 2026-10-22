@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 
 
+class DomainError(Exception): 
+    pass
+
+
 @dataclass(frozen=True)
 class CountryData:
     country: str
@@ -13,10 +17,14 @@ class CountryData:
     continent: str
     
     def __post_init__(self):
-        if self.gdp < 0:
-            raise ValueError(f"GDP can't be a negative number: {self.gdp}")
+        if not self.country:
+            raise DomainError("Country cannot be empty")
+        elif not self.continent:
+            raise DomainError("Continent cannot be empty")
+        elif self.gdp < 0:
+            raise DomainError(f"GDP can't be a negative number: {self.gdp}")
         elif self.population < 0:
-            raise ValueError(
+            raise DomainError(
                 f"Population can't be a negative number: {self.population}"
                 )
         
