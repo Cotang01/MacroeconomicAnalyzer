@@ -5,9 +5,15 @@ build/
 dist/
 wheels/
 *.egg-info
+.mypy_cache/
+.pytest_cache/
 
 # Virtual environments
 .venv
 
 # Pycharm files
 .idea
+
+# Instruments
+.aider*
+PARKING.md
