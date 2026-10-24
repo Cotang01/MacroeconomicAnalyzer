@@ -26,4 +26,15 @@ def test_country_data_rejects_negative_population(valid_country_data_kwargs):
     valid_country_data_kwargs["population"] = -1
     with pytest.raises(DomainError):
         CountryData(**valid_country_data_kwargs)
-        
+
+
+def test_country_data_rejects_empty_country(valid_country_data_kwargs):
+    valid_country_data_kwargs["country"] = ""
+    with pytest.raises(DomainError):
+        CountryData(**valid_country_data_kwargs)
+
+
+def test_country_data_rejects_empty_continent(valid_country_data_kwargs):
+    valid_country_data_kwargs["continent"] = ""
+    with pytest.raises(DomainError):
+        CountryData(**valid_country_data_kwargs)
