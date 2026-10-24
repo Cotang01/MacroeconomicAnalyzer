@@ -8,9 +8,9 @@ T = TypeVar("T")
 
 
 class InvalidDataError(Exception):
-    def __init__(self, msg: str, col: str, value: str | None) -> None:
+    def __init__(self, msg: str, name: str, value: str | None) -> None:
         self.msg = msg
-        self.col = col
+        self.name = name
         self.value = value
 
 
