@@ -1,6 +1,7 @@
-from typing import TypeVar, ClassVar, Callable
+from typing import Any, TypeVar, ClassVar, Callable
 
 from src.domain.models import CountryData, CountryDataField
+from src.infrastructure.db.models import CountryDataModel
 
 
 T = TypeVar("T")
@@ -57,4 +58,43 @@ class CsvCountryDataSchema:
             raise InvalidDataError(
                 f"Could not convert into {cast_func}", col, value
                 ) from e
+
+
+class SqlCountryDataSchema:
     
+    @classmethod
+    def to_domain(cls, row: CountryDataModel) -> CountryData:
+        return CountryData(
+            country=cls._parse(row.country, str, str, 
+                               CountryDataField.COUNTRY),
+            year=cls._parse(row.year, int, int, 
+                            CountryDataField.YEAR),
+            gdp=cls._parse(row.gdp, int, int, 
+                           CountryDataField.GDP),
+            gdp_growth=cls._parse(row.gdp_growth, float, float, 
+                                  CountryDataField.GDP_GROWTH),
+            inflation=cls._parse(row.inflation, float, float, 
+                                 CountryDataField.INFLATION),
+            unemployment=cls._parse(row.unemployment, float, float, 
+                                    CountryDataField.UNEMPLOYMENT),
+            population=cls._parse(row.population, int, int, 
+                                  CountryDataField.POPULATION),
+            continent=cls._parse(row.continent, str, str, 
+                                 CountryDataField.CONTINENT),
+        )
+
+    @classmethod
+    def _parse(cls, 
+               value, 
+               expected_type: type, 
+               cast_func: Callable[[Any], T], 
+               name: str) -> T:
+        if not isinstance(value, expected_type):
+            raise InvalidDataError(
+                f"{value} has invalid type: {type(value)}, expected: {expected_type}",
+                name, value
+                )
+        try:
+            return cast_func(value)
+        except (ValueError, TypeError) as e:
+            raise InvalidDataError(f"Got invalid data: {value}", name, value) from e

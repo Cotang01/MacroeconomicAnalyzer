@@ -3,9 +3,15 @@ import csv
 import logging
 from pathlib import Path
 
+from sqlalchemy import select
+from sqlalchemy.orm import sessionmaker
+
 from src.domain.models import CountryData, DomainError
 from src.domain.interfaces import BaseRepository
-from src.infrastructure.schemas import CsvCountryDataSchema, InvalidDataError
+from src.infrastructure.db.models import CountryDataModel
+from src.infrastructure.schemas import (
+    CsvCountryDataSchema, InvalidDataError, SqlCountryDataSchema
+    )
 
 
 logger = logging.getLogger()
@@ -84,3 +90,20 @@ class CsvRepository(BaseRepository[CountryData]):
                 f"{path} has missing fields: {missing_fields}."
                 )
         return True
+
+
+class SqlRepository(BaseRepository[CountryData]):
+    def __init__(self, 
+                 sessionmaker: sessionmaker, 
+                 schema: type[SqlCountryDataSchema]) -> None:
+        self.sessionmaker = sessionmaker
+        self.schema = schema
+        
+    def stream_data(self, year_range: range) -> Iterator[CountryData]:
+        schema = self.schema
+        query = select(CountryDataModel).where(
+            CountryDataModel.year.between(year_range.start, year_range.stop - 1)
+        )
+        with self.sessionmaker() as session:
+            for row in session.scalars(query).yield_per(1000):
+                yield schema.to_domain(row)
