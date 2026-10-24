@@ -1,7 +1,6 @@
-from enum import StrEnum
 from typing import TypeVar, ClassVar, Callable
 
-from src.domain.models import CountryData
+from src.domain.models import CountryData, CountryDataField
 
 
 T = TypeVar("T")
@@ -12,18 +11,6 @@ class InvalidDataError(Exception):
         self.msg = msg
         self.name = name
         self.value = value
-
-
-# Enums are added to lessen the chances of a typo when accessing keys
-class CountryDataField(StrEnum):
-    COUNTRY = "country"
-    YEAR = "year"
-    GDP = "gdp"
-    GDP_GROWTH = "gdp_growth"
-    INFLATION = "inflation"
-    UNEMPLOYMENT = "unemployment"
-    POPULATION = "population"
-    CONTINENT = "continent"
 
 
 class CsvCountryDataSchema:

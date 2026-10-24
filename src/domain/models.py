@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import StrEnum
 
 
 class DomainError(Exception): 
@@ -34,4 +35,15 @@ class ReportData:
     group_by_field: str
     report_field: str
     data: list[tuple[str, int | float]]
-    
+
+
+# Enums are added to lessen the chances of a typo when using field names
+class CountryDataField(StrEnum):
+    COUNTRY = "country"
+    YEAR = "year"
+    GDP = "gdp"
+    GDP_GROWTH = "gdp_growth"
+    INFLATION = "inflation"
+    UNEMPLOYMENT = "unemployment"
+    POPULATION = "population"
+    CONTINENT = "continent"
