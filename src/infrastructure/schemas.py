@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any, TypeVar, ClassVar, Callable
 
 from src.domain.models import CountryData, CountryDataField
@@ -65,33 +66,33 @@ class SqlCountryDataSchema:
     @classmethod
     def to_domain(cls, row: CountryDataModel) -> CountryData:
         return CountryData(
-            country=cls._parse(row.country, str, str, 
+            country=cls._parse(row.country, (str,), str, 
                                CountryDataField.COUNTRY),
-            year=cls._parse(row.year, int, int, 
+            year=cls._parse(row.year, (int,), int, 
                             CountryDataField.YEAR),
-            gdp=cls._parse(row.gdp, int, int, 
+            gdp=cls._parse(row.gdp, (int,), int, 
                            CountryDataField.GDP),
-            gdp_growth=cls._parse(row.gdp_growth, float, float, 
+            gdp_growth=cls._parse(row.gdp_growth, (int, float, Decimal), float, 
                                   CountryDataField.GDP_GROWTH),
-            inflation=cls._parse(row.inflation, float, float, 
+            inflation=cls._parse(row.inflation, (int, float, Decimal), float, 
                                  CountryDataField.INFLATION),
-            unemployment=cls._parse(row.unemployment, float, float, 
+            unemployment=cls._parse(row.unemployment, (int, float, Decimal), float, 
                                     CountryDataField.UNEMPLOYMENT),
-            population=cls._parse(row.population, int, int, 
+            population=cls._parse(row.population, (int, float, Decimal), int, 
                                   CountryDataField.POPULATION),
-            continent=cls._parse(row.continent, str, str, 
+            continent=cls._parse(row.continent, (str,), str, 
                                  CountryDataField.CONTINENT),
         )
 
     @classmethod
     def _parse(cls, 
                value, 
-               expected_type: type, 
+               expected_types: tuple, 
                cast_func: Callable[[Any], T], 
                name: str) -> T:
-        if not isinstance(value, expected_type):
+        if not isinstance(value, expected_types):
             raise InvalidDataError(
-                f"{value} has invalid type: {type(value)}, expected: {expected_type}",
+                f"{value} has invalid type: {type(value)}, expected: {expected_types}",
                 name, value
                 )
         try:
