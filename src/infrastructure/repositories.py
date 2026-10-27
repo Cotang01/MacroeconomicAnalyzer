@@ -17,15 +17,15 @@ from src.infrastructure.schemas import (
 logger = logging.getLogger()
 
 
-class CsvSourceError(Exception):
+class SourceError(Exception):
     pass
 
 
-class EmptyCsvError(CsvSourceError):
+class EmptyCsvError(SourceError):
     pass
 
 
-class MissingFieldsError(CsvSourceError):
+class MissingFieldsError(SourceError):
     pass
 
 
@@ -63,17 +63,17 @@ class CsvRepository(BaseRepository[CountryData]):
                             if country_data.year in year_range:
                                 yield country_data
                         except InvalidDataError as e:
-                            raise CsvSourceError(
+                            raise SourceError(
                                 f"{path} has invalid data in row {i}: {e}"
                                 ) from e
                         except DomainError as e:
-                            raise CsvSourceError(
+                            raise SourceError(
                                 f"{path} domain rule violation in row {i}: {e}"
                             )
                     if not has_data:
                         logger.warning(f"{path} has headers, but no data")
             except UnicodeDecodeError as e:
-                raise CsvSourceError(f"{e}. Could not decode {path}") from e
+                raise SourceError(f"{e}. Could not decode {path}") from e
     
     def _validate_headers(self, 
                           cur_headers: Sequence[str] | None, 
@@ -105,5 +105,8 @@ class SqlRepository(BaseRepository[CountryData]):
             CountryDataModel.year.between(year_range.start, year_range.stop - 1)
         )
         with self.sessionmaker() as session:
-            for row in session.scalars(query).yield_per(1000):
-                yield schema.to_domain(row)
+            for i, row in enumerate(session.scalars(query).yield_per(1000), start=1):
+                try:
+                    yield schema.to_domain(row)
+                except InvalidDataError as e:
+                    raise SourceError(f"{row} has corrupted data at row {i}") from e

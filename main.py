@@ -6,7 +6,7 @@ from src.app.report_settings import (
     GROUP_BY_FIELD, YEAR_RANGE, IS_DESCENDING_ORDERING
     )
 from src.presenters.console_presenter import ConsolePresenter
-from src.infrastructure.repositories import CsvRepository, CsvSourceError
+from src.infrastructure.repositories import CsvRepository, SourceError
 from src.infrastructure.schemas import CsvCountryDataSchema
 from src.services.analyzers import MacroeconomicAnalyzer
 from src.domain.analysis_rules import OPERATIONS
@@ -35,7 +35,7 @@ def main(argv: list[str] | None = None):
     except BadArgumentError as e:
         logger.error(f"Error occured on validating user inputs: {e}")
         return 1
-    except CsvSourceError as e:
+    except SourceError as e:
         logger.error(f"Error when reading source: {e}")
         return 2
     
