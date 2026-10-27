@@ -44,5 +44,5 @@ def test_to_domain_error_on_invalid_data(valid_raw_data_kwargs, field, invalid_v
     with pytest.raises(InvalidDataError) as e:
         CsvCountryDataSchema().to_domain(valid_raw_data_kwargs)
     e_values = e.value
-    assert e_values.col == field
+    assert e_values.name == field
     assert e_values.value == invalid_value
